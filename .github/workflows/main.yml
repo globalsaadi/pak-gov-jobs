@@ -1,0 +1,32 @@
+name: Auto Job Update
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: pip install requests beautifulsoup4
+
+      - name: Run script
+        run: python scraper.py
+
+      - name: Update Repo
+        run: |
+          git config --global user.name "SarkariBot"
+          git config --global user.email "bot@github.com"
+          git add .
+          git commit -m "Auto update jobs" || exit 0
+          git push
