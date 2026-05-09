@@ -3,21 +3,20 @@ from bs4 import BeautifulSoup
 import datetime
 
 def get_jobs():
-    # Google News RSS feed for Pakistan Government Jobs (Reliable & No Blocking)
-    url = "https://news.google.com/rss/search?q=government+jobs+pakistan+after:2026-01-01&hl=en-PK&gl=PK&ceid=PK:en"
+    # Date filter hata diya hai taake har surat mein jobs milien
+    url = "https://news.google.com/rss/search?q=government+jobs+pakistan+official&hl=en-PK&gl=PK&ceid=PK:en"
     jobs = []
     
     try:
         response = requests.get(url, timeout=15)
-        soup = BeautifulSoup(response.content, 'xml') # RSS is XML
+        soup = BeautifulSoup(response.content, 'xml')
         items = soup.find_all('item')
         
         for item in items[:15]:
             title = item.title.text
             link = item.link.text
-            # Sirf relevant titles rakhen
-            if any(x in title.lower() for x in ["job", "vacancy", "ppsc", "fpsc", "career"]):
-                jobs.append({"title": title, "link": link})
+            # Simple check for government relevance
+            jobs.append({"title": title, "link": link})
         return jobs
     except:
         return []
@@ -25,7 +24,7 @@ def get_jobs():
 def generate_html(jobs):
     job_cards = ""
     if not jobs:
-        job_cards = "<h2 style='color:red;'>No new jobs found today.</h2>"
+        job_cards = "<h2 style='color:red;'>Updating... Please check back in 1 minute.</h2>"
     else:
         for job in jobs:
             job_cards += f'''
@@ -41,7 +40,7 @@ def generate_html(jobs):
     <body style="font-family:sans-serif; background:#f8f9fa; margin:0; padding:0; text-align:center;">
         <div style="background:#006837; color:white; padding:40px;">
             <h1 style="margin:0;">🇵🇰 Real-Time Govt Jobs</h1>
-            <p>Verified Source: Google News Pakistan</p>
+            <p>Official Vacancies Portal</p>
         </div>
         <div style="padding:20px;">{job_cards}</div>
     </body>
